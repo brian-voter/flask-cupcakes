@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Cupcakes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link
+    href="https://bootswatch.com/5/minty/bootstrap.css"
+    rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  </head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h1>Look at our Cupcakes!</h1>
+        <div id="cupcakes">
+          <div>
+            <img src = "https://tinyurl.com/demo-cupcake" style="height:100px; width:auto"/>
+            <ul class="d-inline-block">
+              <li>Flavor:</li>
+              <li>Size:</li>
+              <li>Rating:</li>
+            </ul>
+          </div>
+        </div>
+        <h1>Create a Cupcake!</h1>
+        <div id="cupcake-form" class="d-flex">
+          <form method="POST">
+            <div class="row">
+              <label for="flavor" class="d-block">Flavor: </label>
+              <input id="flavor" type="text" class="d-block" name="flavor" required>
+            </div>
+            <div class="row">
+              <label for="size" class="d-block">Size: </label>
+              <input id="size" type="text" class="d-block" name="size" required>
+            </div>
+            <div class="row">
+              <label for="rating" class="d-block">Rating: </label>
+              <input id="rating" type="number" class="d-block" name="rating" required>
+            </div>
+            <div class="row">
+              <label for="image-url" class="d-block">Image URL: </label>
+              <input id="image-url" type="url" class="d-block" name="image-url">
+            </div>
+            <br>
+            <div class="row">
+              <a href="/tags" class="btn btn-secondary d-block">Cancel</a>
+              <button id="submit-btn" class='btn btn-primary d-block'>Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <script src='static/app.js'></script>
+</body>
+</html>
