@@ -2,7 +2,7 @@
 
 import os
 from flask import Flask, request, jsonify
-from models import db, connect_db, Cupcake
+from models import db, connect_db, Cupcake, DEFAULT_CUPCAKE_IMAGE_URL
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -77,10 +77,21 @@ def update_cupcake(cupcake_id):
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
 
+    # URL, empty string, or None
+    image_url = request.json.get("image_url")
+
+    new_image_url = ""
+    if image_url is None:
+        new_image_url = cupcake.image_url
+    elif image_url == "":
+        new_image_url = DEFAULT_CUPCAKE_IMAGE_URL
+    else:
+        new_image_url = image_url
+
     cupcake.flavor = request.json.get("flavor", cupcake.flavor)
     cupcake.size = request.json.get("size", cupcake.size)
     cupcake.rating = request.json.get("rating", cupcake.rating)
-    cupcake.image_url = request.json.get("image_url", cupcake.image_url)
+    cupcake.image_url = new_image_url
 
     db.session.commit()
 

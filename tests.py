@@ -143,3 +143,4 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 0)
+            self.assertEqual(client.delete(url).status_code, 404)
