@@ -13,7 +13,7 @@ connect_db(app)
 
 @app.get('/')
 def get_homepage():
-    """displays homepage html"""
+    """returns homepage html"""
 
     return render_template("home.html")
 
@@ -83,7 +83,10 @@ def update_cupcake(cupcake_id):
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
 
-    # URL, empty string, or None
+
+    # Support resetting to the default cupcake image if we receive an empty string:
+
+    # image_url is a URL, an empty string, or None
     image_url = request.json.get("image_url")
 
     new_image_url = ""
