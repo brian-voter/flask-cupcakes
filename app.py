@@ -15,14 +15,35 @@ connect_db(app)
 def get_all_cupcakes():
     """returns all cupcakes"""
 
-    serialized = [cupcake.serialized() for cupcake in Cupcake.query.all()]
+    serialized = [cupcake.serialize() for cupcake in Cupcake.query.all()]
 
     return jsonify(cupcakes=serialized)
 
 @app.get("/api/cupcakes/<int:cupcake_id>")
-def get_all_cupcakes(cupcake_id):
-    """returns all cupcakes"""
+def get_cupcake(cupcake_id):
+    """returns a cupcake"""
 
-    serialized = [cupcake.serialized() for cupcake in Cupcake.query.all()]
+    cupcake = Cupcake.query.get_or_404(cupcake_id)
+    serialized = cupcake.serialize()
 
-    return jsonify(cupcakes=serialized)
+    return jsonify(cupcake=serialized)
+@app.post('/api/cupcakes')
+def create_cupcake():
+    """creates a cupcake"""
+
+    flavor = request.json["flavor"]
+    size = request.json["size"]
+    rating = request.json["rating"]
+    image_url = request.json["image_url"]
+
+    new_cupcake = Cupcake(
+                          flavor=flavor,
+                          size=size,
+                          rating=rating,
+                          image_url=image_url
+                          )
+
+    db.session.add(new_cupcake)
+    db.session.commit()
+
+    return (jsonify(cupcake=new_cupcake.serialize()), 201)
