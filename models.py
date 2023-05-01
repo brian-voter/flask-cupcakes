@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class Cupcake(db.Model):
     """Cupcake."""
 
-    __tablename__ = "cupcake"
+    __tablename__ = "cupcakes"
 
 
     id = db.Column(
@@ -33,7 +33,7 @@ class Cupcake(db.Model):
     )
 
     image_url = db.Column(
-        db.String(500),
+        db.Text,
         nullable=False,
         default="https://tinyurl.com/demo-cupcake"
     )
