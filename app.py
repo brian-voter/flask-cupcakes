@@ -84,7 +84,7 @@ def update_cupcake(cupcake_id):
 
     db.session.commit()
 
-    return (jsonify(cupcake=cupcake.serialize()), 201)
+    return jsonify(cupcake=cupcake.serialize())
 
 @app.delete("/api/cupcakes/<int:cupcake_id>")
 def delete_cupcake(cupcake_id):
@@ -101,6 +101,3 @@ def delete_cupcake(cupcake_id):
     db.session.commit()
 
     return jsonify(deleted = [cupcake_id])
-
-
-
