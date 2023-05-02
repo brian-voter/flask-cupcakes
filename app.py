@@ -11,15 +11,19 @@ app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
 
+
 @app.get('/')
 def get_homepage():
     """returns homepage html"""
 
     return render_template("home.html")
 
+
 @app.get("/api/cupcakes")
-def get_all_cupcakes():
-    """returns all cupcakes
+def get_cupcakes():
+    """returns all cupcakes, or, if there is a query string argument named 'q',
+    searches for cupcakes with flavor or size similar to the value for key 'q'.
+
     returns JSON:
         {cupcakes: [
             {id, flavor, size, rating, image_url},
@@ -27,9 +31,21 @@ def get_all_cupcakes():
         }
     """
 
-    serialized = [cupcake.serialize() for cupcake in Cupcake.query.all()]
+    queryString = request.args.get("q")
+
+    if (queryString is None):
+        cupcakes = Cupcake.query.all()
+        print("NO FILTER")
+    else:
+        filterString = f"%{queryString}%"
+        print("FILTERING ON: filterString:", filterString)
+        cupcakes = Cupcake.query.filter(Cupcake.flavor.ilike(filterString) |
+                                        Cupcake.size.ilike(filterString))
+
+    serialized = [cupcake.serialize() for cupcake in cupcakes]
 
     return jsonify(cupcakes=serialized)
+
 
 @app.get("/api/cupcakes/<int:cupcake_id>")
 def get_cupcake(cupcake_id):
@@ -45,6 +61,7 @@ def get_cupcake(cupcake_id):
 
     return jsonify(cupcake=serialized)
 
+
 @app.post("/api/cupcakes")
 def create_cupcake():
     """creates a cupcake
@@ -57,20 +74,21 @@ def create_cupcake():
     flavor = request.json["flavor"]
     size = request.json["size"]
     rating = request.json["rating"]
-    image_url = request.json["image_url"] or None #have to give None to use default from model
-
+    # have to give None to use default from model
+    image_url = request.json["image_url"] or None
 
     new_cupcake = Cupcake(
-                    flavor=flavor,
-                    size=size,
-                    rating=rating,
-                    image_url=image_url
-                  )
+        flavor=flavor,
+        size=size,
+        rating=rating,
+        image_url=image_url
+    )
 
     db.session.add(new_cupcake)
     db.session.commit()
 
     return (jsonify(cupcake=new_cupcake.serialize()), 201)
+
 
 @app.patch("/api/cupcakes/<int:cupcake_id>")
 def update_cupcake(cupcake_id):
@@ -82,7 +100,6 @@ def update_cupcake(cupcake_id):
     """
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
-
 
     # Support resetting to the default cupcake image if we receive an empty string:
 
@@ -106,6 +123,7 @@ def update_cupcake(cupcake_id):
 
     return jsonify(cupcake=cupcake.serialize())
 
+
 @app.delete("/api/cupcakes/<int:cupcake_id>")
 def delete_cupcake(cupcake_id):
     """deletes a cupcake
@@ -120,4 +138,4 @@ def delete_cupcake(cupcake_id):
     db.session.delete(cupcake)
     db.session.commit()
 
-    return jsonify(deleted = [cupcake_id])
+    return jsonify(deleted=[cupcake_id])
