@@ -2,6 +2,8 @@
 
 const API_ENDPOINT = '/api/cupcakes';
 
+const $searchBar = $('#search-bar');
+
 const $cupcakeList = $('#cupcakes');
 const $flavorInput = $('#flavor');
 const $sizeInput = $('#size');
@@ -12,12 +14,18 @@ const $submitBtn = $('#submit-btn');
 
 displayAllCupcakes();
 $submitBtn.on("click", submitNewCupcake);
+$searchBar.on("input", displayAllCupcakes);
 
 /**
- * Adds all the cupcakes to the list in the DOM using a GET request to /cupcakes
+ * On load: Adds all the cupcakes to the list in the DOM using a GET request to /cupcakes
+ * On search: Adds filtering cupcakes to the list in the DOM using a GET request to /cupcakes?q="searched"
  */
 async function displayAllCupcakes() {
-  const response = await axios.get(API_ENDPOINT);
+
+  $cupcakeList.html("");
+
+  let userSearch = $searchBar.val();
+  const response = await axios.get(API_ENDPOINT, { params: { q: userSearch } });
 
   for (const cupcake of response.data.cupcakes) {
     appendCupcake(cupcake);
@@ -53,13 +61,13 @@ async function submitNewCupcake(evt) {
 function appendCupcake(cupcake) {
   $cupcakeList.append(
     $('<div>').html(
-            `<img src = '${cupcake.image_url}' style="height:100px; width:auto"/>
+      `<img src = '${cupcake.image_url}' style="height:100px; width:auto"/>
             <ul class="d-inline-block">
               <li>Flavor: ${cupcake.flavor}</li>
               <li>Size: ${cupcake.size}</li>
               <li>Rating: ${cupcake.rating}</li>
             </ul>`
     )
-  )
+  );
 }
 
